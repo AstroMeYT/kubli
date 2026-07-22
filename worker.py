@@ -246,7 +246,7 @@ def select_model_interactively(installed_models: List[str]) -> str:
             choice = input(f"\nSelect a model number to serve (1-{len(installed_models)}) [Default: 1]: ").strip()
             if not choice:
                 selected = installed_models[0]
-                print(f"Selected default: {selected}")
+                print(f"Selected default model: {selected}")
                 return selected
             
             if choice.isdigit():
@@ -265,9 +265,29 @@ def select_model_interactively(installed_models: List[str]) -> str:
             print("\nModel selection cancelled by user.")
             sys.exit(0)
 
+def select_server_url(default_url: str = "http://localhost:13500") -> str:
+    """Presents a CLI prompt for the user to enter or confirm the Kubli server URL."""
+    print("\n==============================================")
+    print(" Kubli Server Connection Setup:")
+    print("==============================================")
+    try:
+        url_input = input(f"Enter Kubli Server URL [Default: {default_url}]: ").strip()
+        if not url_input:
+            print(f"Using default server URL: {default_url}")
+            return default_url
+        
+        if not url_input.startswith("http://") and not url_input.startswith("https://"):
+            url_input = f"http://{url_input}"
+        
+        print(f"Server URL set to: {url_input}")
+        return url_input
+    except (KeyboardInterrupt, EOFError):
+        print("\nServer URL configuration cancelled by user.")
+        sys.exit(0)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Kubli Distributed AI Compute Worker")
-    parser.add_argument("--server", type=str, default="http://localhost:8000", help="Kubli Server URL")
+    parser.add_argument("--server", type=str, default=None, help="Kubli Server URL (if omitted, interactive prompt will ask)")
     parser.add_argument("--id", type=str, default=f"worker-{uuid.uuid4().hex[:6]}", help="Unique worker ID")
     parser.add_argument("--model", type=str, default=None, help="Specific model name (if omitted, an interactive menu will pop up)")
     parser.add_argument("--ollama", type=str, default="http://localhost:11434", help="Local Ollama instance URL")
@@ -276,8 +296,8 @@ if __name__ == "__main__":
 
     installed = asyncio.run(fetch_ollama_models(args.ollama))
 
+    # 1. Select AI Model
     selected_model = args.model
-
     if not selected_model:
         selected_model = select_model_interactively(installed)
     else:
@@ -292,8 +312,14 @@ if __name__ == "__main__":
             print(f"Installed models: {', '.join(installed) if installed else 'None'}\n")
             sys.exit(1)
 
+    # 2. Select / Confirm Kubli Server URL
+    server_url = args.server
+    if not server_url:
+        server_url = select_server_url("http://localhost:13500")
+
+    # 3. Instantiate and run worker node
     worker = KubliWorker(
-        server_url=args.server,
+        server_url=server_url,
         worker_id=args.id,
         model=selected_model,
         ollama_url=args.ollama
