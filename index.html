@@ -1280,12 +1280,6 @@
                   </svg>
                 </button>
 
-                <!-- Parameter Toggle Button -->
-                <button type="button" onclick="toggleParamsPopover()" class="btn-param-toggle">
-                  <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                  <span>Temp: <span id="tempDisplay" class="param-val">0.7</span></span>
-                </button>
-
                 <span id="charCounter" class="char-counter">0 chars</span>
               </div>
 
@@ -1438,7 +1432,25 @@
       });
     }
 
+    async function loadServerUrlConfig() {
+      try {
+        const response = await fetch('url.txt');
+        if (response.ok) {
+          const text = await response.text();
+          const trimmedUrl = text.trim();
+          if (trimmedUrl) {
+            serverUrl = trimmedUrl.replace(/\/+$/, '');
+            const urlInput = getEl('serverUrlInput');
+            if (urlInput) urlInput.value = serverUrl;
+          }
+        }
+      } catch (e) {
+        console.warn("url.txt not found or unreachable, defaulting to fallback server URL:", serverUrl);
+      }
+    }
+
     window.onload = async () => {
+      await loadServerUrlConfig();
       await openDB();
       const savedConvs = await getAllConversationsFromDB();
 
