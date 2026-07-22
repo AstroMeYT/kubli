@@ -20,4 +20,4 @@ This will prompt you to choose the model you want to host. This will only show m
 
 ## How to Set Up a Server
 
-The best way to set up your own server for Kubli is to download and run the ```server.py``` file, and point a tunnel or port forwarding configuration to ```YOUR_IP:13500```. Users and workers can then connect to that server.
+The best way to set up your own server for Kubli is to download and run the ```server.py``` file, and point a tunnel or port forwarding configuration to ```YOUR_IP:8000```. Users and workers can then connect to that server.
