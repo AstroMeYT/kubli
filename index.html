@@ -5,60 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kubli AI Requester Dashboard</title>
 
-  <!-- Google Fonts: Cantarell (GNOME standard) & JetBrains Mono -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cantarell:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <!-- Marked Markdown Parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-
   <style>
     :root {
-      /* GNOME Libadwaita Dark Palette (Frameless & Seamless) */
-      --window-bg-color: #242424;
-      --view-bg-color: #1e1e1e;
-      --headerbar-bg-color: #303030;
-      --sidebar-bg-color: #282828;
-      --card-bg-color: rgba(255, 255, 255, 0.05);
-      --card-hover-bg-color: rgba(255, 255, 255, 0.09);
-      --popover-bg-color: #383838;
-      --dialog-bg-color: #383838;
-      --entry-bg-color: #2e2e2e;
+      /* Libadwaita Dark Theme Palette */
+      --bg-base: #242424;
+      --bg-surface: #1e1e1e;
+      --bg-sidebar: #242424;
+      --bg-card: #2a2a2a;
+      --bg-elevated: #303030;
+      --bg-input: #303030;
+      
+      /* Greyscale Borders & Lines */
+      --border-subtle: rgba(255, 255, 255, 0.05);
+      --border-medium: rgba(255, 255, 255, 0.1);
+      --border-strong: rgba(255, 255, 255, 0.15);
 
-      /* Adwaita Accent Colors */
-      --accent-color: #3584e4;
-      --accent-hover-color: #1c71d8;
-      --accent-active-color: #15539e;
-      --accent-bg-color: #3584e4;
-      --accent-fg-color: #ffffff;
-      --accent-subtle: rgba(53, 132, 228, 0.2);
+      /* Greyscale Typography */
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.7);
+      --text-dim: rgba(255, 255, 255, 0.5);
 
-      /* Typography & Text */
-      --window-fg-color: #ffffff;
-      --text-secondary: #c0bfbc;
-      --text-dim: #9a9996;
+      /* Libadwaita Blue Accent */
+      --blue-500: #3584e4;
+      --blue-600: #1c71d8;
+      --blue-700: #1a5fb4;
+      --blue-light: #62a0ea;
+      --blue-glow: rgba(53, 132, 228, 0.25);
+      --blue-subtle: rgba(53, 132, 228, 0.15);
 
-      /* Adwaita Status Indicators */
-      --success-color: #2ec27e;
-      --success-subtle: rgba(46, 194, 126, 0.18);
-      --destructive-color: #e01b24;
-      --destructive-subtle: rgba(224, 27, 36, 0.18);
+      /* Status Colors */
+      --emerald: #10b981;
+      --emerald-subtle: rgba(16, 185, 129, 0.15);
+      --rose: #f43f5e;
+      --rose-subtle: rgba(244, 63, 94, 0.15);
 
-      /* Layout & Fonts */
-      --sidebar-width: 280px;
-      --font-sans: 'Cantarell', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      /* Layout Settings */
+      --sidebar-width: 260px;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-
-      /* Adwaita Corner Radii */
-      --radius-xs: 6px;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-pill: 9999px;
     }
 
     * {
@@ -70,31 +62,27 @@
     html, body {
       height: 100%;
       width: 100%;
-      background-color: var(--window-bg-color);
-      color: var(--window-fg-color);
+      background-color: var(--bg-base);
+      color: var(--text-main);
       font-family: var(--font-sans);
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Adwaita Overlay Scrollbars */
+    /* Scrollbar Customization */
     ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
       background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.18);
-      border-radius: var(--radius-pill);
-      border: 2px solid transparent;
-      background-clip: content-box;
+      background: var(--border-medium);
+      border-radius: 999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.32);
-      border: 2px solid transparent;
-      background-clip: content-box;
+      background: var(--border-strong);
     }
 
     .app-layout {
@@ -106,80 +94,81 @@
 
     .sidebar {
       width: var(--sidebar-width);
-      background-color: var(--sidebar-bg-color);
-      border: none;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
-      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition: transform 0.25s ease;
       z-index: 30;
     }
 
     .sidebar-header {
-      height: 56px;
+      height: 60px;
       padding: 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: none;
-      background-color: var(--headerbar-bg-color);
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .brand-logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .brand-img {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius-sm);
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-icon img {
+      width: 100%;
+      height: 100%;
       object-fit: contain;
-      background-color: rgba(255, 255, 255, 0.05);
-      padding: 2px;
+      border-radius: inherit;
     }
 
     .brand-title {
       font-weight: 700;
-      font-size: 0.92rem;
-      color: var(--window-fg-color);
+      font-size: 0.95rem;
+      color: var(--text-main);
       letter-spacing: -0.01em;
     }
 
     .brand-subtitle {
-      font-size: 0.72rem;
-      color: var(--text-secondary);
+      font-size: 0.7rem;
+      color: var(--text-muted);
     }
 
     .new-chat-container {
       padding: 12px;
     }
 
-    .btn-adwaita-pill {
+    .btn-new-chat {
       width: 100%;
-      padding: 9px 14px;
-      background-color: rgba(255, 255, 255, 0.08);
-      color: var(--window-fg-color);
-      border: none;
-      border-radius: var(--radius-pill);
-      font-family: var(--font-sans);
-      font-size: 0.82rem;
-      font-weight: 700;
+      padding: 10px 12px;
+      background-color: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 500;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
     }
 
-    .btn-adwaita-pill:hover {
-      background-color: rgba(255, 255, 255, 0.14);
-    }
-
-    .btn-adwaita-pill:active {
-      background-color: rgba(255, 255, 255, 0.05);
-      transform: translateY(1px);
+    .btn-new-chat:hover {
+      background-color: var(--border-medium);
+      border-color: var(--border-strong);
     }
 
     .btn-new-chat-left {
@@ -191,54 +180,56 @@
     .kbd-shortcut {
       font-family: var(--font-mono);
       font-size: 0.65rem;
-      color: var(--text-secondary);
-      background: rgba(0, 0, 0, 0.25);
-      border: none;
-      padding: 2px 6px;
-      border-radius: var(--radius-xs);
+      color: var(--text-muted);
+      background: var(--bg-base);
+      border: 1px solid var(--border-medium);
+      padding: 2px 5px;
+      border-radius: 4px;
     }
 
     .history-section {
       flex: 1;
       overflow-y: auto;
-      padding: 8px 10px;
+      padding: 8px 12px;
     }
 
     .history-title {
-      font-size: 0.68rem;
-      font-weight: 700;
+      font-size: 0.65rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       color: var(--text-dim);
-      padding: 8px 10px 4px 10px;
+      padding: 6px 8px;
+      font-family: var(--font-mono);
     }
 
     .history-item {
       width: 100%;
       text-align: left;
-      padding: 9px 12px;
-      border-radius: var(--radius-md);
-      font-size: 0.82rem;
-      color: var(--text-secondary);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
       transition: all 0.15s ease;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .history-item:hover {
-      background-color: rgba(255, 255, 255, 0.07);
-      color: var(--window-fg-color);
+      background-color: var(--bg-card);
+      color: var(--text-main);
     }
 
     .history-item.active {
-      background-color: var(--accent-subtle);
-      color: var(--accent-color);
-      font-weight: 700;
+      background-color: var(--blue-subtle);
+      border-color: rgba(37, 99, 235, 0.4);
+      color: var(--blue-light);
+      font-weight: 500;
     }
 
     .history-item-title {
@@ -253,8 +244,8 @@
       background: transparent;
       border: none;
       color: var(--text-dim);
-      padding: 3px 5px;
-      border-radius: var(--radius-xs);
+      padding: 2px 4px;
+      border-radius: 4px;
       cursor: pointer;
       opacity: 0;
       transition: all 0.15s ease;
@@ -265,41 +256,40 @@
     }
 
     .btn-delete-chat:hover {
-      color: #ffffff;
-      background-color: var(--destructive-color);
+      color: var(--rose);
+      background-color: var(--rose-subtle);
     }
 
     .sidebar-footer {
-      padding: 10px 12px;
-      border: none;
-      background-color: var(--headerbar-bg-color);
+      padding: 12px;
+      border-top: 1px solid var(--border-subtle);
+      background-color: var(--bg-surface);
     }
 
     .btn-preferences {
       width: 100%;
-      padding: 8px 12px;
+      padding: 8px 10px;
       background: transparent;
       border: none;
-      border-radius: var(--radius-md);
-      color: var(--text-secondary);
-      font-size: 0.82rem;
-      font-weight: 500;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.78rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      transition: all 0.15s ease;
+      transition: background 0.15s ease;
     }
 
     .btn-preferences:hover {
-      background-color: rgba(255, 255, 255, 0.07);
-      color: var(--window-fg-color);
+      background-color: var(--bg-card);
+      color: var(--text-main);
     }
 
     .btn-preferences-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .main-content {
@@ -308,19 +298,18 @@
       flex-direction: column;
       height: 100%;
       min-width: 0;
-      background-color: var(--view-bg-color);
+      background-color: var(--bg-surface);
       position: relative;
     }
 
     .app-header {
-      height: 56px;
-      border: none;
+      height: 60px;
+      border-bottom: 1px solid var(--border-subtle);
       padding: 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background-color: var(--headerbar-bg-color);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      background-color: var(--bg-surface);
       z-index: 20;
     }
 
@@ -333,9 +322,9 @@
     .btn-icon {
       background: transparent;
       border: none;
-      color: var(--text-secondary);
-      padding: 7px;
-      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      padding: 8px;
+      border-radius: 8px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -344,12 +333,8 @@
     }
 
     .btn-icon:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-      color: var(--window-fg-color);
-    }
-
-    .btn-icon:active {
-      background-color: rgba(255, 255, 255, 0.14);
+      background-color: var(--bg-card);
+      color: var(--text-main);
     }
 
     .btn-mobile-toggle {
@@ -358,40 +343,35 @@
 
     .model-select-wrapper {
       position: relative;
-      min-width: 220px;
+      min-width: 200px;
     }
 
     .model-select {
       width: 100%;
-      background-color: rgba(255, 255, 255, 0.08);
-      border: none;
-      color: var(--window-fg-color);
-      font-family: var(--font-sans);
-      font-size: 0.82rem;
-      font-weight: 700;
-      border-radius: var(--radius-pill);
-      padding: 7px 32px 7px 14px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      color: var(--text-main);
+      font-size: 0.78rem;
+      font-weight: 500;
+      border-radius: 10px;
+      padding: 8px 30px 8px 12px;
       appearance: none;
       cursor: pointer;
       outline: none;
-      transition: all 0.15s ease;
-    }
-
-    .model-select:hover {
-      background-color: rgba(255, 255, 255, 0.14);
+      transition: border-color 0.15s ease;
     }
 
     .model-select:focus {
-      box-shadow: 0 0 0 2px var(--accent-color);
+      border-color: var(--blue-500);
     }
 
     .select-arrow {
       position: absolute;
-      right: 12px;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
       pointer-events: none;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       width: 14px;
       height: 14px;
     }
@@ -399,47 +379,46 @@
     .status-badge {
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 5px 12px;
-      border-radius: var(--radius-pill);
-      font-size: 0.75rem;
-      font-weight: 700;
-      font-family: var(--font-sans);
-      border: none;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 500;
     }
 
     .status-badge.online {
-      background-color: var(--success-subtle);
-      color: var(--success-color);
+      background-color: var(--emerald-subtle);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
     .status-badge.offline {
-      background-color: var(--destructive-subtle);
-      color: var(--destructive-color);
+      background-color: var(--rose-subtle);
+      color: var(--rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
     }
 
     .status-badge.online .status-dot {
-      background-color: var(--success-color);
+      background-color: var(--emerald);
     }
 
     .status-badge.offline .status-dot {
-      background-color: var(--destructive-color);
+      background-color: var(--rose);
     }
 
     .chat-container {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 24px 240px 24px;
-      max-width: 880px;
+      padding: 24px;
+      max-width: 860px;
       width: 100%;
       margin: 0 auto;
-      scroll-behavior: smooth;
     }
 
     .welcome-state {
@@ -449,86 +428,83 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      max-width: 580px;
+      max-width: 520px;
       margin: auto;
-      padding: 32px 16px;
+      padding: 32px 0;
     }
 
-    .welcome-icon-box {
-      width: 68px;
-      height: 68px;
-      border-radius: var(--radius-lg);
-      background-color: rgba(255, 255, 255, 0.06);
-      border: none;
+    .welcome-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      margin-bottom: 20px;
     }
 
-    .welcome-logo-img {
-      width: 44px;
-      height: 44px;
+    .welcome-icon img {
+      width: 100%;
+      height: 100%;
       object-fit: contain;
+      border-radius: inherit;
     }
 
     .welcome-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: var(--window-fg-color);
-      margin-bottom: 8px;
-      letter-spacing: -0.01em;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
     }
 
     .welcome-sub {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-bottom: 28px;
-      line-height: 1.4;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
     }
 
     .presets-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
       text-align: left;
     }
 
     .preset-card {
-      background-color: rgba(255, 255, 255, 0.05);
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 14px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
     }
 
     .preset-card:hover {
-      background-color: rgba(255, 255, 255, 0.09);
+      border-color: var(--blue-500);
+      background-color: var(--bg-elevated);
       transform: translateY(-1px);
     }
 
     .preset-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--window-fg-color);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-main);
       margin-bottom: 4px;
     }
 
     .preset-card:hover .preset-title {
-      color: var(--accent-color);
+      color: var(--blue-light);
     }
 
     .preset-desc {
-      font-size: 0.74rem;
-      color: var(--text-secondary);
+      font-size: 0.7rem;
+      color: var(--text-muted);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      line-height: 1.35;
+      line-height: 1.3;
     }
 
     .messages-list {
@@ -552,72 +528,67 @@
     }
 
     .avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: var(--radius-sm);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      font-size: 0.8rem;
-      font-weight: 700;
+      font-size: 0.75rem;
+      font-weight: 600;
     }
 
     .avatar.assistant {
-      background-color: rgba(255, 255, 255, 0.06);
-      border: none;
-      color: var(--accent-color);
-      padding: 3px;
-    }
-
-    .avatar-logo {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+      background-color: var(--blue-subtle);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      color: var(--blue-light);
     }
 
     .avatar.user {
-      background-color: var(--accent-bg-color);
-      color: var(--accent-fg-color);
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-medium);
+      color: var(--text-main);
     }
 
     .bubble {
       max-width: 82%;
-      padding: 14px 18px;
-      border-radius: var(--radius-lg);
-      font-size: 0.88rem;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 0.85rem;
       line-height: 1.55;
     }
 
     .bubble.user {
-      background-color: var(--accent-bg-color);
-      color: var(--accent-fg-color);
-      border-top-right-radius: var(--radius-xs);
+      background-color: var(--blue-600);
+      color: #ffffff;
+      border-top-right-radius: 2px;
+      box-shadow: 0 2px 8px var(--blue-glow);
     }
 
     .bubble.assistant {
-      background-color: rgba(255, 255, 255, 0.05);
-      border: none;
-      color: var(--window-fg-color);
-      border-top-left-radius: var(--radius-xs);
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      border-top-left-radius: 2px;
     }
 
     .bubble-attachments {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .attachment-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
+      padding: 4px 8px;
+      border-radius: 6px;
       background: rgba(0, 0, 0, 0.25);
-      border: none;
-      font-size: 0.72rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.7rem;
       color: #ffffff;
       max-width: 220px;
     }
@@ -631,10 +602,11 @@
     .bubble-meta {
       margin-top: 10px;
       padding-top: 8px;
+      border-top: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-family: var(--font-mono);
       color: var(--text-dim);
     }
@@ -642,21 +614,19 @@
     .btn-copy {
       background: transparent;
       border: none;
-      color: var(--text-secondary);
-      font-size: 0.72rem;
-      font-family: var(--font-sans);
-      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.68rem;
       cursor: pointer;
       transition: color 0.15s ease;
     }
 
     .btn-copy:hover {
-      color: var(--window-fg-color);
+      color: var(--text-main);
     }
 
     .prose {
-      color: inherit;
-      font-size: 0.88rem;
+      color: var(--text-main);
+      font-size: 0.85rem;
       line-height: 1.6;
       word-break: break-word;
     }
@@ -664,91 +634,76 @@
     .prose p { margin-bottom: 0.8em; }
     .prose p:last-child { margin-bottom: 0; }
     .prose h1, .prose h2, .prose h3, .prose h4 {
-      color: inherit;
-      font-weight: 700;
+      color: var(--text-main);
+      font-weight: 600;
       margin-top: 1.2em;
       margin-bottom: 0.5em;
       line-height: 1.3;
     }
-    .prose h1 { font-size: 1.25rem; padding-bottom: 0.3em; }
+    .prose h1 { font-size: 1.25rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.3em; }
     .prose h2 { font-size: 1.1rem; }
     .prose h3 { font-size: 0.95rem; }
     .prose ul, .prose ol { margin-top: 0.4em; margin-bottom: 0.8em; padding-left: 1.4em; }
     .prose li { margin-bottom: 0.3em; }
     .prose blockquote {
-      border-left: 3px solid var(--accent-color);
-      background: rgba(255, 255, 255, 0.05);
+      border-left: 3px solid var(--blue-500);
+      background: var(--bg-elevated);
       padding: 8px 12px;
       margin: 0.8em 0;
-      border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
-      color: var(--text-secondary);
+      border-radius: 0 6px 6px 0;
+      color: var(--text-muted);
       font-style: italic;
     }
     .prose code {
       font-family: var(--font-mono);
-      background-color: rgba(0, 0, 0, 0.3);
-      color: #78aeed;
-      padding: 2px 6px;
-      border-radius: var(--radius-xs);
-      font-size: 0.84em;
+      background-color: var(--bg-elevated);
+      color: var(--blue-light);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 0.82em;
     }
     .prose pre {
-      background-color: #181818;
-      border: none;
+      background-color: var(--bg-base);
+      border: 1px solid var(--border-medium);
       padding: 12px;
-      border-radius: var(--radius-md);
+      border-radius: 8px;
       overflow-x: auto;
       margin: 0.8em 0;
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
     .prose pre code {
       background: transparent;
       padding: 0;
-      color: #f6f5f4;
+      color: var(--text-main);
     }
     .prose table {
       width: 100%;
       border-collapse: collapse;
       margin: 0.8em 0;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
     }
     .prose th, .prose td {
+      border: 1px solid var(--border-medium);
       padding: 8px 10px;
       text-align: left;
     }
     .prose th {
-      background-color: rgba(255, 255, 255, 0.05);
-      font-weight: 700;
+      background-color: var(--bg-elevated);
+      color: var(--text-main);
+      font-weight: 600;
     }
-
-    .katex-display {
-      margin: 1em 0 !important;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding: 4px 0;
+    .prose tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.02);
     }
-    .katex {
-      font-size: 1.05em;
-      color: inherit;
+    .prose a {
+      color: var(--blue-light);
+      text-decoration: underline;
     }
-    .math-inline {
-      font-family: 'KaTeX_Math', 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', serif;
-      font-style: italic;
-      background: rgba(53, 132, 228, 0.15);
-      color: #78aeed;
-      padding: 2px 6px;
-      border-radius: var(--radius-xs);
-    }
-    .math-block {
-      font-family: 'KaTeX_Math', 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', serif;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 12px;
-      border-radius: var(--radius-md);
-      margin: 0.8em 0;
-      overflow-x: auto;
-      color: #78aeed;
-      text-align: center;
+    .prose hr {
+      border: none;
+      border-top: 1px solid var(--border-medium);
+      margin: 1.2em 0;
     }
 
     .dots-container {
@@ -756,13 +711,14 @@
       align-items: center;
       gap: 5px;
       margin-top: 8px;
+      padding: 2px 0;
     }
 
     .typing-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background-color: var(--accent-color);
+      background-color: var(--blue-light);
       animation: pulseDot 1.4s infinite ease-in-out;
     }
 
@@ -774,99 +730,50 @@
       50% { opacity: 1; transform: scale(1.15); }
     }
 
-    @keyframes rotateGlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
     .input-dock {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 28px 16px 20px 16px;
-      background: linear-gradient(to bottom, rgba(30, 30, 30, 0) 0px, rgba(30, 30, 30, 0.6) 18px, rgba(30, 30, 30, 0.85) 28px, rgba(30, 30, 30, 0.95) 100%);
-      backdrop-filter: blur(20px) saturate(150%);
-      -webkit-backdrop-filter: blur(20px) saturate(150%);
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 28px, rgba(0, 0, 0, 1) 100%);
-      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 28px, rgba(0, 0, 0, 1) 100%);
-      pointer-events: none;
-      z-index: 20;
+      padding: 16px;
+      border-top: 1px solid var(--border-subtle);
+      background-color: var(--bg-surface);
     }
 
     .input-dock-inner {
-      max-width: 880px;
+      max-width: 860px;
       margin: 0 auto;
       position: relative;
-      pointer-events: auto;
     }
 
     .chat-form {
-      position: relative;
-      background-color: rgba(46, 46, 46, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-lg);
-      padding: 12px 14px;
-      transition: all 0.15s ease;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-      overflow: hidden;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-medium);
+      border-radius: 16px;
+      padding: 12px;
+      transition: border-color 0.15s ease;
+      animation: subtlePurpleGlow 4s infinite ease-in-out;
     }
 
-    .chat-form > * {
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Soft, widely diffused purple glow rotating clockwise */
-    .chat-form::before {
-      content: '';
-      position: absolute;
-      top: -60%;
-      left: -60%;
-      width: 220%;
-      height: 220%;
-      background: conic-gradient(
-        from 0deg,
-        transparent 0deg,
-        rgba(168, 85, 247, 0.15) 60deg,
-        rgba(147, 51, 234, 0.4) 120deg,
-        rgba(192, 132, 252, 0.2) 180deg,
-        transparent 240deg,
-        transparent 360deg
-      );
-      animation: rotateGlow 10s linear infinite;
-      pointer-events: none;
-      z-index: 0;
-      filter: blur(32px);
-    }
-
-    .chat-form::after {
-      content: '';
-      position: absolute;
-      inset: 2px;
-      background-color: rgba(42, 42, 42, 0.92);
-      border-radius: calc(var(--radius-lg) - 2px);
-      pointer-events: none;
-      z-index: 1;
-      box-shadow: inset 0 0 14px rgba(168, 85, 247, 0.28);
+    @keyframes subtlePurpleGlow {
+      0% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(168, 85, 247, 0.2); }
+      50% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 0 15px rgba(168, 85, 247, 0.5); }
+      100% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(168, 85, 247, 0.2); }
     }
 
     .chat-form.drag-over {
-      background-color: rgba(255, 255, 255, 0.12);
+      border-color: var(--blue-500);
+      background-color: var(--bg-card);
     }
 
     .chat-form:focus-within {
-      box-shadow: 0 0 0 2px var(--accent-color), 0 0 20px rgba(168, 85, 247, 0.35);
+      border-color: var(--blue-500);
     }
 
+    /* Document attachment pre-send container */
     .pending-attachments {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 8px;
       padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .file-chip {
@@ -874,11 +781,11 @@
       align-items: center;
       gap: 6px;
       padding: 4px 10px;
-      border-radius: var(--radius-pill);
-      background-color: rgba(255, 255, 255, 0.08);
-      border: none;
-      font-size: 0.74rem;
-      color: var(--window-fg-color);
+      border-radius: 8px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      font-size: 0.72rem;
+      color: var(--text-main);
     }
 
     .file-chip-name {
@@ -889,7 +796,7 @@
     }
 
     .file-chip-size {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       color: var(--text-dim);
       font-family: var(--font-mono);
     }
@@ -897,7 +804,7 @@
     .btn-remove-file {
       background: transparent;
       border: none;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -905,7 +812,7 @@
     }
 
     .btn-remove-file:hover {
-      color: var(--destructive-color);
+      color: var(--rose);
     }
 
     .prompt-textarea {
@@ -913,12 +820,12 @@
       background: transparent;
       border: none;
       outline: none;
-      color: var(--window-fg-color);
+      color: var(--text-main);
       font-family: var(--font-sans);
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       resize: none;
       max-height: 180px;
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
     .prompt-textarea::placeholder {
@@ -931,7 +838,7 @@
       justify-content: space-between;
       padding-top: 8px;
       margin-top: 6px;
-      border: none;
+      border-top: 1px solid var(--border-subtle);
     }
 
     .form-controls-left {
@@ -943,73 +850,68 @@
     .btn-attach-file {
       background: transparent;
       border: none;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       padding: 6px;
-      border-radius: var(--radius-sm);
+      border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s ease;
+      transition: background 0.15s ease;
     }
 
     .btn-attach-file:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-      color: var(--accent-color);
+      background-color: var(--bg-card);
+      color: var(--blue-light);
     }
 
     .btn-param-toggle {
       background: transparent;
       border: none;
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.72rem;
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
+      padding: 4px 8px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: background 0.15s ease;
     }
 
     .btn-param-toggle:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-      color: var(--window-fg-color);
+      background-color: var(--bg-card);
+      color: var(--text-main);
     }
 
     .param-val {
       font-family: var(--font-mono);
-      color: var(--accent-color);
+      color: var(--blue-light);
     }
 
     .char-counter {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-family: var(--font-mono);
       color: var(--text-dim);
     }
 
     .btn-send {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-pill);
-      background-color: var(--accent-bg-color);
-      color: var(--accent-fg-color);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background-color: var(--blue-600);
+      color: #ffffff;
       border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px var(--blue-glow);
     }
 
     .btn-send:hover:not(:disabled) {
-      background-color: var(--accent-hover-color);
-    }
-
-    .btn-send:active:not(:disabled) {
-      background-color: var(--accent-active-color);
+      background-color: var(--blue-500);
     }
 
     .btn-send:disabled {
@@ -1019,35 +921,34 @@
     }
 
     .input-disclaimer {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-dim);
       text-align: center;
       margin-top: 8px;
     }
 
-    /* Popovers & Modals - Floating with Soft Shadows & No Outlines */
     .params-popover {
       position: absolute;
       bottom: calc(100% + 10px);
       left: 0;
-      width: 270px;
-      background-color: var(--popover-bg-color);
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 16px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+      width: 260px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
       z-index: 40;
     }
 
     .popover-title {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--window-fg-color);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-main);
       margin-bottom: 12px;
     }
 
     .slider-group {
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .slider-group:last-child {
@@ -1057,20 +958,20 @@
     .slider-header {
       display: flex;
       justify-content: space-between;
-      font-size: 0.74rem;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
     }
 
     .slider-input {
       width: 100%;
-      accent-color: var(--accent-color);
+      accent-color: var(--blue-500);
     }
 
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background-color: rgba(0, 0, 0, 0.65);
+      background-color: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(4px);
       z-index: 50;
       display: flex;
@@ -1080,120 +981,115 @@
     }
 
     .modal-card {
-      background-color: var(--dialog-bg-color);
-      border: none;
-      border-radius: var(--radius-lg);
-      max-width: 440px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 16px;
+      max-width: 420px;
       width: 100%;
-      padding: 24px;
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65);
+      padding: 20px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
     }
 
     .modal-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .modal-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--window-fg-color);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .form-label {
       display: block;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
     }
 
     .text-input {
       width: 100%;
-      background-color: var(--entry-bg-color);
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 9px 12px;
-      font-size: 0.84rem;
+      background-color: var(--bg-base);
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.8rem;
       font-family: var(--font-mono);
-      color: var(--window-fg-color);
+      color: var(--text-main);
       outline: none;
-      transition: all 0.15s ease;
     }
 
     .text-input:focus {
-      box-shadow: 0 0 0 2px var(--accent-color);
+      border-color: var(--blue-500);
     }
 
     .modal-actions {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 10px;
-      padding-top: 14px;
-      border: none;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
+      background: transparent;
       border: none;
-      color: var(--window-fg-color);
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 8px 16px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      padding: 8px 14px;
       cursor: pointer;
-      border-radius: var(--radius-pill);
-      transition: all 0.15s ease;
+      border-radius: 8px;
     }
 
     .btn-secondary:hover {
-      background-color: rgba(255, 255, 255, 0.14);
+      color: var(--text-main);
     }
 
     .btn-primary {
-      background-color: var(--accent-bg-color);
-      color: var(--accent-fg-color);
+      background-color: var(--blue-600);
+      color: #ffffff;
       border: none;
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 8px 18px;
-      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.15s ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
 
     .btn-primary:hover {
-      background-color: var(--accent-hover-color);
+      background-color: var(--blue-500);
     }
 
     .toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      bottom: 20px;
+      right: 20px;
       z-index: 60;
-      max-width: 360px;
+      max-width: 340px;
       width: 100%;
-      background-color: var(--popover-bg-color);
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 12px 16px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-medium);
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       gap: 12px;
       transform: translateY(80px);
       opacity: 0;
-      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition: all 0.3s ease;
       pointer-events: none;
     }
 
@@ -1203,19 +1099,19 @@
     }
 
     .toast-icon {
-      color: var(--accent-color);
+      color: var(--blue-light);
       flex-shrink: 0;
     }
 
     .toast-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--window-fg-color);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-main);
     }
 
     .toast-msg {
-      font-size: 0.74rem;
-      color: var(--text-secondary);
+      font-size: 0.7rem;
+      color: var(--text-muted);
       margin-top: 2px;
     }
 
@@ -1243,7 +1139,7 @@
       }
 
       .chat-container {
-        padding: 16px 16px 260px 16px;
+        padding: 16px;
       }
     }
   </style>
@@ -1252,15 +1148,16 @@
 <body>
   <div class="app-layout">
 
-    <!-- Adwaita Navigation Sidebar -->
+    <!-- Sidebar -->
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
         <div class="brand-logo">
-          <!-- Logo replaced with favicon.png as requested with fallback image handling -->
-          <img src="favicon.png" alt="Kubli Logo" class="brand-img" onerror="this.onerror=null; this.src='https://placehold.co/36x36/3584e4/ffffff?text=K';" />
+          <div class="brand-icon">
+            <img src="favicon.png" alt="Kubli Logo" />
+          </div>
           <div>
             <div class="brand-title">Kubli AI</div>
-            <div class="brand-subtitle">GNOME / Adwaita</div>
+            <div class="brand-subtitle">Assistant</div>
           </div>
         </div>
 
@@ -1270,9 +1167,9 @@
       </div>
 
       <div class="new-chat-container">
-        <button onclick="createNewChat()" class="btn-adwaita-pill">
+        <button onclick="createNewChat()" class="btn-new-chat">
           <div class="btn-new-chat-left">
-            <svg style="width:16px;height:16px;color:var(--accent-color);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg style="width:16px;height:16px;color:var(--blue-light);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             <span>New Chat</span>
@@ -1295,7 +1192,7 @@
             </svg>
             <span>Preferences</span>
           </div>
-          <span id="serverStatusDot" class="status-dot" style="background-color: var(--destructive-color);"></span>
+          <span id="serverStatusDot" class="status-dot" style="background-color: var(--rose);"></span>
         </button>
       </div>
     </aside>
@@ -1324,15 +1221,14 @@
 
       <div id="chatContainer" class="chat-container">
 
-        <!-- GTK4 Adwaita StatusPage Welcome View -->
+        <!-- Welcome Placeholder View -->
         <div id="welcomeState" class="welcome-state">
-          <div class="welcome-icon-box">
-            <!-- Logo set to favicon.png with fallback placeholder -->
-            <img src="favicon.png" alt="Kubli AI Logo" class="welcome-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/44x44/3584e4/ffffff?text=K';" />
+          <div class="welcome-icon">
+            <img src="favicon.png" alt="Kubli Logo" />
           </div>
 
           <h2 class="welcome-title">How can I help you today?</h2>
-          <p class="welcome-sub">Select an AI model from the top headerbar and attach documents or enter a prompt to begin.</p>
+          <p class="welcome-sub">Select an AI model above and attach documents or enter a prompt to begin.</p>
 
           <div class="presets-grid">
             <div onclick="usePreset('Analyze the attached document and provide a concise summary with key takeaways.')" class="preset-card">
@@ -1351,7 +1247,7 @@
             </div>
 
             <div onclick="usePreset('Draft a concise professional email summarizing a project update for stakeholders.')" class="preset-card">
-              <div class="preset-title">✉️ Draft Email</div>
+              <div class="preset-title">📝 Draft Email</div>
               <div class="preset-desc">Professional status update for team stakeholders</div>
             </div>
           </div>
@@ -1379,19 +1275,46 @@
               <div class="form-controls-left">
                 <!-- Attach Document / Image Button -->
                 <button type="button" onclick="document.getElementById('fileInput').click()" class="btn-attach-file" title="Attach documents or images (Max 10MB total)">
-                  <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                   </svg>
+                </button>
+
+                <!-- Parameter Toggle Button -->
+                <button type="button" onclick="toggleParamsPopover()" class="btn-param-toggle">
+                  <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                  <span>Temp: <span id="tempDisplay" class="param-val">0.7</span></span>
                 </button>
 
                 <span id="charCounter" class="char-counter">0 chars</span>
               </div>
 
               <button type="submit" id="btnSend" class="btn-send">
-                <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               </button>
+            </div>
+
+            <!-- Parameters Floating Drawer -->
+            <div id="paramsPopover" class="params-popover hidden">
+              <div class="popover-title">Generation Parameters</div>
+              
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Temperature</span>
+                  <span id="tempVal" class="param-val">0.7</span>
+                </div>
+                <input type="range" id="paramTemp" min="0" max="1" step="0.05" value="0.7" oninput="document.getElementById('tempVal').innerText = this.value; document.getElementById('tempDisplay').innerText = this.value" class="slider-input">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Top-P</span>
+                  <span id="topPVal" class="param-val">0.9</span>
+                </div>
+                <input type="range" id="paramTopP" min="0" max="1" step="0.05" value="0.9" oninput="document.getElementById('topPVal').innerText = this.value" class="slider-input">
+              </div>
             </div>
 
           </form>
@@ -1408,8 +1331,8 @@
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title">
-          <svg style="width:20px;height:20px;color:var(--accent-color);" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          Preferences & Settings
+          <svg style="width:20px;height:20px;color:var(--blue-light);" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Server Settings
         </div>
         <button onclick="closeSettingsModal()" class="btn-icon">
           <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1418,23 +1341,7 @@
 
       <div class="form-group">
         <label class="form-label">Kubli Server Endpoint URL</label>
-        <input type="text" id="serverUrlInput" value="http://localhost:13500" class="text-input">
-      </div>
-
-      <div class="form-group">
-        <div class="slider-header" style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">
-          <span>Temperature</span>
-          <span id="tempVal" class="param-val">0.7</span>
-        </div>
-        <input type="range" id="paramTemp" min="0" max="1" step="0.05" value="0.7" oninput="document.getElementById('tempVal').innerText = this.value" class="slider-input">
-      </div>
-
-      <div class="form-group">
-        <div class="slider-header" style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.78rem; font-weight: 700; color: var(--text-secondary);">
-          <span>Top-P</span>
-          <span id="topPVal" class="param-val">0.9</span>
-        </div>
-        <input type="range" id="paramTopP" min="0" max="1" step="0.05" value="0.9" oninput="document.getElementById('topPVal').innerText = this.value" class="slider-input">
+        <input type="text" id="serverUrlInput" value="http://localhost:8000" class="text-input">
       </div>
 
       <div class="modal-actions">
@@ -1455,13 +1362,13 @@
   </div>
 
   <script>
-    let serverUrl = "http://localhost:13500";
+    let serverUrl = "http://localhost:8000";
     let isConnected = false;
     let pollInterval = null;
     let conversations = [];
     let activeChatId = null;
     let isGenerating = false;
-    let pendingFiles = [];
+    let pendingFiles = []; // Array of attached document / image objects
 
     const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB Limit
 
@@ -1533,23 +1440,6 @@
 
     window.onload = async () => {
       await openDB();
-
-      try {
-        const urlRes = await fetch('url.txt');
-        if (urlRes.ok) {
-          const fetchedUrl = (await urlRes.text()).trim();
-          if (fetchedUrl) {
-            serverUrl = fetchedUrl;
-          }
-        }
-      } catch (err) {
-        console.log("url.txt not found or inaccessible, using default server URL:", serverUrl);
-      }
-
-      if (getEl('serverUrlInput')) {
-        getEl('serverUrlInput').value = serverUrl;
-      }
-
       const savedConvs = await getAllConversationsFromDB();
 
       if (savedConvs && savedConvs.length > 0) {
@@ -1577,7 +1467,7 @@
         });
       }
 
-      // Drag and drop file handling
+      // Drag and drop event handling
       const chatForm = getEl('chatForm');
       if (chatForm) {
         ['dragenter', 'dragover'].forEach(eventName => {
@@ -1621,7 +1511,7 @@
       if (files && files.length > 0) {
         processSelectedFiles(files);
       }
-      e.target.value = '';
+      e.target.value = ''; // Reset input
     }
 
     async function processSelectedFiles(files) {
@@ -1698,7 +1588,7 @@
       container.classList.remove('hidden');
       container.innerHTML = pendingFiles.map((file, idx) => `
         <div class="file-chip">
-          <svg style="width:14px;height:14px;color:var(--accent-color);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg style="width:14px;height:14px;color:var(--blue-light);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${file.type === 'image' ? 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' : 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'}" />
           </svg>
           <span class="file-chip-name">${escapeHtml(file.name)}</span>
@@ -1736,12 +1626,18 @@
 
     function setConnectedState(connected) {
       isConnected = connected;
+      const statusBadge = getEl('statusBadge');
+      const statusText = getEl('statusText');
       const serverStatusDot = getEl('serverStatusDot');
 
       if (connected) {
-        serverStatusDot.style.backgroundColor = "var(--success-color)";
+        if (statusBadge) statusBadge.className = "status-badge online";
+        if (statusText) statusText.innerText = "Kubli Online";
+        if (serverStatusDot) serverStatusDot.style.backgroundColor = "var(--emerald)";
       } else {
-        serverStatusDot.style.backgroundColor = "var(--destructive-color)";
+        if (statusBadge) statusBadge.className = "status-badge offline";
+        if (statusText) statusText.innerText = "Offline";
+        if (serverStatusDot) serverStatusDot.style.backgroundColor = "var(--rose)";
         getEl('modelSelect').innerHTML = `<option value="" disabled selected>Server disconnected...</option>`;
       }
     }
@@ -1864,8 +1760,9 @@
           <div class="message-row ${isUser ? 'user' : 'assistant'}">
             ${!isUser ? `
               <div class="avatar assistant">
-                <!-- Avatar icon using favicon.png -->
-                <img src="favicon.png" alt="Kubli AI Avatar" class="avatar-logo" onerror="this.onerror=null; this.src='https://placehold.co/32x32/3584e4/ffffff?text=K';" />
+                <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
               </div>
             ` : ''}
 
@@ -2043,7 +1940,7 @@
                 renderActiveConversation();
               }
             } catch (err) {
-              // Ignore partial JSON parse errors
+              // Ignore line parse errors
             }
           }
         }
@@ -2071,6 +1968,11 @@
       input.value = text;
       input.dispatchEvent(new Event('input'));
       input.focus();
+    }
+
+    function toggleParamsPopover() {
+      const popover = getEl('paramsPopover');
+      popover.classList.toggle('hidden');
     }
 
     function toggleSidebar() {
@@ -2104,70 +2006,25 @@
 
     function formatMarkdown(text) {
       if (!text) return '';
-
-      const placeholders = [];
-
-      // 1. Preserve block math $$ ... $$ with alphanumeric placeholder tokens
-      text = text.replace(/\$\$([\s\S]+?)\$\$/g, (match, math) => {
-        const id = `KATEXMATHBLOCK${placeholders.length}KATEX`;
-        let renderedHTML = '';
-        if (typeof katex !== 'undefined') {
-          try {
-            renderedHTML = katex.renderToString(math.trim(), { displayMode: true, throwOnError: false });
-          } catch (e) {
-            renderedHTML = `<div class="math-block">${escapeHtml(math.trim())}</div>`;
-          }
-        } else {
-          renderedHTML = `<div class="math-block">${escapeHtml(math.trim())}</div>`;
-        }
-        placeholders.push({ id, html: renderedHTML });
-        return id;
-      });
-
-      // 2. Preserve inline math $ ... $ with alphanumeric placeholder tokens
-      text = text.replace(/(^|[^\\])\$([^\$\n]+?)\$/g, (match, prefix, math) => {
-        const id = `KATEXMATHINLINE${placeholders.length}KATEX`;
-        let renderedHTML = '';
-        if (typeof katex !== 'undefined') {
-          try {
-            renderedHTML = katex.renderToString(math.trim(), { displayMode: false, throwOnError: false });
-          } catch (e) {
-            renderedHTML = `<span class="math-inline">${escapeHtml(math.trim())}</span>`;
-          }
-        } else {
-          renderedHTML = `<span class="math-inline">${escapeHtml(math.trim())}</span>`;
-        }
-        placeholders.push({ id, html: renderedHTML });
-        return prefix + id;
-      });
-
-      let html = '';
       try {
         if (typeof marked !== 'undefined') {
           marked.setOptions({
             gfm: true,
             breaks: true
           });
-          html = marked.parse(text);
-        } else {
-          html = escapeHtml(text);
+          return marked.parse(text);
         }
       } catch (e) {
         console.error("Markdown parsing error:", e);
-        html = escapeHtml(text);
       }
 
-      // 3. Re-insert rendered math into HTML safely without Markdown underscore mangling
-      placeholders.forEach(item => {
-        const pWrapped = `<p>${item.id}</p>`;
-        if (html.includes(pWrapped)) {
-          html = html.replace(pWrapped, item.html);
-        } else {
-          html = html.replace(new RegExp(item.id, 'g'), item.html);
-        }
-      });
-
-      return html;
+      let escaped = escapeHtml(text);
+      escaped = escaped.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+      escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+      escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      escaped = escaped.replace(/\n/g, '<br>');
+      return escaped;
     }
 
     function escapeHtml(str) {
