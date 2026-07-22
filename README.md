@@ -16,7 +16,7 @@ python3 worker.py
 
 ```
 
-This will prompt you to choose the model you want to host. This will only show models you have installed. Once selected, it will prompt you for the server's URL. Our server's URL can be found in the ```url.txt``` file in this repository. After entering the URL, your system is connected and ready to receive prompts from users!
+This will prompt you to choose the model you want to host. This will only show models you have installed. Once selected, it will prompt you for the server's URL. Our server's URL can be found in the ```url.txt``` file in this repository. After entering the URL, your system is connected and ready to receive prompts from users! NOTE: it is best to use local models through Ollama rather than cloud models. Otherwise, you might quickly run out of credits for your account!
 
 ## How to Set Up a Server
 
